@@ -3,6 +3,60 @@ const App = (() => {
   let courses = [], course = null, lesson = null, exIdx = 0, state = {}, answered = false;
   let chatHistory = [];
   const $ = (id) => document.getElementById(id);
+
+  // ---------- API layer ----------
+  // Server mode: same-origin /api routes. Static mode (GitHub Pages etc.):
+  // courses come from bundled JSON; AI calls go directly to xAI with a key
+  // the user stores in their browser (Settings). No proxy needed.
+  const SERVER_MODE = location.protocol === "http:" || location.protocol === "https:";
+  let apiBase = "";        // "" = same origin (server mode), otherwise e.g. https://api.x.ai/v1
+  const settings = {
+    get key() { return localStorage.getItem("lingualibre_xai_key") || ""; },
+    set key(v) { localStorage.setItem("lingualibre_xai_key", v); },
+    get model() { return localStorage.getItem("lingualibre_xai_model") || "grok-2-latest"; }
+  };
+  async function api(path, opts) {
+    if (SERVER_MODE) return fetch("/api" + path, opts);
+    if (path === "/courses") return fetch("data/courses.json");
+    if (path.startsWith("/course/")) {
+      const all = await (await fetch("data/courses.json")).json();
+      const id = path.slice(8);
+      const c = all.find((x) => x.id === id);
+      return { ok: !!c, json: async () => c || { error: "not found" } };
+    }
+    if (path === "/status") {
+      return { ok: true, json: async () => ({ app: "LinguaLibre", unlimited: true, grokKeyConfigured: !!settings.key, staticMode: true }) };
+    }
+    // AI endpoints -> direct call to xAI (key stays in the user's own browser)
+    const body = opts && opts.body ? JSON.parse(opts.body) : {};
+    let messages = [];
+    if (path === "/tutor") {
+      messages = [
+        { role: "system", content: "You are a friendly, unlimited language tutor for LinguaLibre, an open-source Duolingo-style app. Help learners with " + (body.lang === "de" ? "German (student speaks English)" : "English (student speaks German)") + ". Be brief and encouraging." },
+        ...(body.history || []), { role: "user", content: body.message }
+      ];
+    } else if (path === "/explain") {
+      return { ok: true, json: async () => ({ explanation: "AI explanations need a server. In static mode, add your XAI key in Profile → Settings and use the AI Tutor & AI Practice tabs — or run `npm start` locally to enable this feature too." }) };
+    } else if (path === "/practice") {
+      messages = [{ role: "system", content: 'Create translate exercises for a learner of ' + (body.lang === "de" ? "German" : "English") + '. Reply EXACTLY as JSON array: [{"source":"...","target":"..."}] where source is in the learner\'s native language and target in the target language. Simple A1-A2 level, topic: ' + (body.topic || "daily life") + ". No markdown." }];
+    }
+    const r = await fetch("https://api.x.ai/v1/chat/completions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: "Bearer " + settings.key },
+      body: JSON.stringify({ model: settings.model, messages })
+    });
+    if (!r.ok) return { ok: false, json: async () => ({ error: "xAI request failed (" + r.status + "). Check your key in Settings." }) };
+    const data = await r.json();
+    const text = data.choices && data.choices[0] && data.choices[0].message.content || "";
+    if (path === "/tutor") return { ok: true, json: async () => ({ reply: text }) };
+    if (path === "/practice") {
+      let exercises = [];
+      try { exercises = JSON.parse(text.replace(/```json|```/g, "").trim()); } catch (e) {}
+      return { ok: true, json: async () => ({ exercises }) };
+    }
+    return { ok: false, json: async () => ({ error: "unknown endpoint" }) };
+  }
+
   const store = {
     get: () => JSON.parse(localStorage.getItem("lingualibre") || "{}"),
     set: (s) => localStorage.setItem("lingualibre", JSON.stringify(s))
@@ -17,10 +71,11 @@ const App = (() => {
     if (!state.days.includes(today)) { /* recorded on lesson finish */ }
     store.set(state);
 
-    const res = await fetch("/api/courses");
+    const res = await api("/courses");
     courses = await res.json();
     renderCourseCards();
-    const status = await (await fetch("/api/status")).json();
+    let status = {};
+    try { status = await (await api("/status")).json(); } catch (e) {}
     if (!status.grokKeyConfigured) {
       $("view-practice").querySelector("p").innerHTML += " <b>(⚠️ Set XAI_API_KEY in .env to enable AI features.)</b>";
       $("view-tutor").querySelector("p").innerHTML += " <b>(⚠️ Set XAI_API_KEY in .env to enable AI features.)</b>";
@@ -40,7 +95,7 @@ const App = (() => {
   function showHome() { switchView("home"); }
   function switchTab(tab) {
     if (tab === "learn" && !course) return showHome();
-    if (tab === "profile") renderProfile();
+    if (tab === "profile") { renderProfile(); renderKeySettings(); }
     switchView(tab);
     document.querySelectorAll(".navbtn").forEach((b) => b.classList.toggle("active", b.dataset.view === tab));
   }
@@ -51,7 +106,7 @@ const App = (() => {
 
   // ---------- skill tree ----------
   async function openCourse(id) {
-    course = await (await fetch("/api/course/" + id)).json();
+    course = await (await api("/course/" + id)).json();
     $("courseTitle").textContent = `${course.flag} ${course.name}`;
     renderTree();
     switchView("learn");
@@ -257,7 +312,7 @@ const App = (() => {
     btn.onclick = async () => {
       btn.disabled = true; btn.textContent = " …thinking";
       try {
-        const r = await (await fetch("/api/explain", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ word, lang: course.id }) })).json();
+        const r = await (await api("/explain", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ word, lang: course.id }) })).json();
         if (r.translation) d.textContent = `${word} → ${r.translation} · ${r.example} (${r.exampleTranslation}) · ${r.note}`;
         else d.textContent = "AI unavailable: " + (r.error || "");
       } catch (e) { d.textContent = "AI unavailable."; }
@@ -299,13 +354,26 @@ const App = (() => {
   }
   function resetProgress() { if (confirm("Reset all local progress?")) { localStorage.removeItem("lingualibre"); location.reload(); } }
 
+  // ---------- Grok key settings (static/hosted mode: key stays in YOUR browser) ----------
+  function saveKey() {
+    const v = $("xaiKeyInput").value.trim();
+    if (v) settings.key = v; else localStorage.removeItem("lingualibre_xai_key");
+    $("keyStatus").textContent = v ? "✅ Key saved in this browser only — AI Tutor & AI Practice are live. Unlimited." : "⚠️ No key set — AI features disabled (lessons still work fully).";
+  }
+  function renderKeySettings() {
+    if ($("xaiKeyInput")) $("xaiKeyInput").value = settings.key;
+    if ($("keyStatus")) $("keyStatus").textContent = settings.key
+      ? "✅ Key saved in this browser only — AI Tutor & AI Practice are live. Unlimited."
+      : "⚠️ No key set — AI features disabled (lessons still work fully).";
+  }
+
   // ---------- AI practice ----------
   async function generatePractice() {
     const topic = $("practiceTopic").value || "daily life";
     const area = $("practiceArea");
     area.innerHTML = "<p class='muted'>Generating with Grok…</p>";
     try {
-      const r = await (await fetch("/api/practice", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ lang: course ? course.id : "de", topic }) })).json();
+      const r = await (await api("/practice", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ lang: course ? course.id : "de", topic }) })).json();
       if (!r.exercises) throw new Error(r.error || "failed");
       area.innerHTML = r.exercises.map((e, i) => `
         <div class="practice-item" data-answer="${esc(e.target)}">
@@ -337,7 +405,7 @@ const App = (() => {
     chatHistory.push({ role: "user", content: msg });
     const thinking = logMsg("bot", "Lingo is typing…");
     try {
-      const r = await (await fetch("/api/tutor", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: msg, history: chatHistory.slice(0, -1), lang: course ? course.id : "de" }) })).json();
+      const r = await (await api("/tutor", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ message: msg, history: chatHistory.slice(0, -1), lang: course ? course.id : "de" }) })).json();
       thinking.textContent = r.reply || ("Error: " + (r.error || "unknown"));
       chatHistory.push({ role: "assistant", content: thinking.textContent });
     } catch (e) {
@@ -353,9 +421,9 @@ const App = (() => {
   }
 
   // probe grok availability once
-  fetch("/api/status").then((r) => r.json()).then((s) => { window._grokOn = s.grokKeyConfigured; });
+  api("/status").then((r) => r.json()).then((s) => { window._grokOn = s.grokKeyConfigured; });
 
-  return { boot, showHome, switchTab, openCourse, startLesson, quitLesson, pick, chip, matchPick, checkAnswer, skipExercise, nextExercise, closeComplete, generatePractice, checkPractice, sendChat, resetProgress };
+  return { boot, showHome, switchTab, openCourse, startLesson, quitLesson, pick, chip, matchPick, checkAnswer, skipExercise, nextExercise, closeComplete, generatePractice, checkPractice, sendChat, resetProgress, saveKey };
 })();
 
 document.addEventListener("DOMContentLoaded", App.boot);

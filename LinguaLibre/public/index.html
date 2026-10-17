@@ -107,6 +107,15 @@
       <p class="muted">We track lessons completed & streak for fun — but nothing is gated. Everything stays unlocked forever.</p>
       <button class="btn btn-red-outline" onclick="App.resetProgress()">Reset progress</button>
     </div>
+    <div class="panel">
+      <h2>🤖 Grok AI settings</h2>
+      <p class="muted">When hosted statically (GitHub Pages / surge), paste your xAI API key here. It is stored <b>only in your browser's localStorage</b> and sent directly to api.x.ai — never to any third-party server. When running the Node server, put the key in <code>.env</code> instead.</p>
+      <div class="row">
+        <input id="xaiKeyInput" type="password" placeholder="XAI_API_KEY (xai-…)" />
+        <button class="btn btn-green" onclick="App.saveKey()">SAVE</button>
+      </div>
+      <p id="keyStatus" class="muted"></p>
+    </div>
   </main>
 
   <script src="js/audio.js"></script>
