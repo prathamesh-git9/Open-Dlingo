@@ -73,3 +73,19 @@ This project is **inspired by** Duolingo's UX but contains **no Duolingo tradema
 ## License
 
 MIT — see [LICENSE](../LICENSE). Course data is released under CC0 (public domain): share and adapt freely.
+
+## 🌐 Hosting it online (free, 2 options)
+
+I can't publish to the internet from this sandbox (no hosting credentials), but the app is now built so you can go live in ~2 minutes:
+
+**Option A — Vercel (recommended, keeps server + Grok proxy):**
+1. Push this folder to a GitHub repo
+2. Go to vercel.com → Import repo → Framework preset: **Other**, command `npm start`
+3. Add env var `XAI_API_KEY` → Deploy. Done: full app + AI tutor on a free `*.vercel.app` URL.
+(`.vercel.json` with the server rewrite is already included.)
+
+**Option B — GitHub Pages (zero server, static):**
+1. Push to GitHub → Settings → Pages → serve from the **`docs/`** folder
+2. All lessons/courses/audio work instantly. For the Grok AI features, open the app and paste your xAI key under **Profile → Grok AI settings** — it's stored only in *your* browser and talks directly to api.x.ai (never to any third-party server).
+
+The app auto-detects which mode it's running in (`public/js/app.js` API layer).
