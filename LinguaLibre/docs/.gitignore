@@ -1,0 +1,9 @@
+node_modules
+.env
+server.log
+data/
+grok.js
+package*.json
+.vercel.json
+README.md
+.gitignore
