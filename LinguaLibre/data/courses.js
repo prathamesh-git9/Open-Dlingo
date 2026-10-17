@@ -1,0 +1,336 @@
+// LinguaLibre — Open course data (CC0 / MIT). No paywalls, no energy limits.
+// Two languages: German (taught to English speakers) and English (taught to German speakers).
+
+const GERMAN_COURSE = {
+  id: "de",
+  name: "German",
+  flag: "🇩🇪",
+  fromLang: "en",
+  units: [
+    {
+      id: "de-u1",
+      title: "Basics 1",
+      color: "#58cc02",
+      description: "Greetings, people and the verb \"sein\"",
+      lessons: [
+        {
+          id: "de-u1-l1",
+          title: "Greetings",
+          exercises: [
+            { type: "select", prompt: "Which one means \"hello\"?", options: ["Hallo", "Tschüss", "Danke", "Bitte"], answer: "Hallo" },
+            { type: "translate", prompt: "Translate this sentence", wordBank: ["Guten", "Morgen", "Tag", "Abend"], answer: "Guten Morgen", hint: "Good morning" },
+            { type: "choice", prompt: "\"Tschüss\" means…", options: ["Goodbye", "Thank you", "Please", "Hello"], answer: "Goodbye" },
+            { type: "listen", prompt: "Hallo!", audio: "hallo", options: ["hello", "goodbye", "thanks", "night"], answer: "hello" },
+            { type: "typeIn", prompt: "Type German for: \"Good evening\"", answer: ["Guten Abend", "guten abend"] },
+            { type: "match", pairs: [["Hallo", "Hello"], ["Tschüss", "Bye"], ["Danke", "Thanks"], ["Gut", "Good"]] }
+          ]
+        },
+        {
+          id: "de-u1-l2",
+          title: "People",
+          exercises: [
+            { type: "select", prompt: "Which one means \"the man\"?", options: ["der Mann", "die Frau", "das Kind", "der Hund"], answer: "der Mann" },
+            { type: "choice", prompt: "\"die Frau\" means…", options: ["the woman", "the girl", "the mother", "the wife"], answer: "the woman" },
+            { type: "translate", prompt: "Translate this sentence", wordBank: ["Ich", "bin", "ein", "Mann", "die", "Frau"], answer: "Ich bin ein Mann", hint: "I am a man" },
+            { type: "typeIn", prompt: "Type German for: \"I am a woman\"", answer: ["Ich bin eine Frau", "ich bin eine frau"] },
+            { type: "choice", prompt: "What is \"das Kind\"?", options: ["the child", "the friend", "the family", "the baby"], answer: "the child" },
+            { type: "match", pairs: [["der Mann", "the man"], ["die Frau", "the woman"], ["das Kind", "the child"], ["die Familie", "the family"]] }
+          ]
+        },
+        {
+          id: "de-u1-l3",
+          title: "Being (sein)",
+          exercises: [
+            { type: "choice", prompt: "Complete: \"Ich ___ Student.\"", options: ["bin", "bist", "ist", "sind"], answer: "bin" },
+            { type: "choice", prompt: "Complete: \"Du ___ klug.\"", options: ["bist", "bin", "ist", "seid"], answer: "bist" },
+            { type: "translate", prompt: "Translate this sentence", wordBank: ["Er", "ist", "mein", "Freund", "bin", "die"], answer: "Er ist mein Freund", hint: "He is my friend" },
+            { type: "typeIn", prompt: "Type German for: \"We are here\"", answer: ["Wir sind hier", "wir sind hier"] },
+            { type: "fillBlank", prompt: "Sie ___ sehr nett. (to be, formal singular/plural)", blank: "ist/sind", options: ["ist", "sind", "bist", "bin"], answer: "sind" },
+            { type: "match", pairs: [["ich bin", "I am"], ["du bist", "you are"], ["er ist", "he is"], ["wir sind", "we are"]] }
+          ]
+        }
+      ]
+    },
+    {
+      id: "de-u2",
+      title: "Food & Drink",
+      color: "#1cb0f6",
+      description: "Order like a local",
+      lessons: [
+        {
+          id: "de-u2-l1",
+          title: "Drinks",
+          exercises: [
+            { type: "select", prompt: "Which one means \"the water\"?", options: ["das Wasser", "der Wein", "das Bier", "die Milch"], answer: "das Wasser" },
+            { type: "listen", prompt: "Ich trinke Kaffee.", audio: "ich trinke kaffee", options: ["I drink coffee", "I eat bread", "I drink tea", "I want beer"], answer: "I drink coffee" },
+            { type: "translate", prompt: "Translate this sentence", wordBank: ["Der", "Apfelsaft", "Wasser", "trinke", "Brot"], answer: "Der Apfelsaft", hint: "The apple juice" },
+            { type: "typeIn", prompt: "Type German for: \"I would like a beer\"", answer: ["Ich möchte ein Bier", "ich moechte ein bier", "ich möchte ein bier"] },
+            { type: "match", pairs: [["das Wasser", "the water"], ["der Kaffee", "the coffee"], ["das Bier", "the beer"], ["die Milch", "the milk"]] }
+          ]
+        },
+        {
+          id: "de-u2-l2",
+          title: "Eating",
+          exercises: [
+            { type: "choice", prompt: "\"das Brot\" means…", options: ["the bread", "the butter", "the cheese", "the cake"], answer: "the bread" },
+            { type: "translate", prompt: "Translate this sentence", wordBank: ["Ich", "esse", "einen", "Apfel", "trinke", "das"], answer: "Ich esse einen Apfel", hint: "I eat an apple" },
+            { type: "choice", prompt: "Which verb means \"to drink\"?", options: ["trinken", "essen", "lesen", "fahren"], answer: "trinken" },
+            { type: "typeIn", prompt: "Type German for: \"The apple is red\"", answer: ["Der Apfel ist rot", "der apfel ist rot"] },
+            { type: "fillBlank", prompt: "Du ___ Pizza. (essen, 2nd person singular)", options: ["isst", "esst", "esse", "essen"], answer: "isst" },
+            { type: "match", pairs: [["essen", "to eat"], ["trinken", "to drink"], ["der Apfel", "the apple"], ["der Käse", "the cheese"]] }
+          ]
+        },
+        {
+          id: "de-u2-l3",
+          title: "At the Restaurant",
+          exercises: [
+            { type: "choice", prompt: "How do you ask for the bill?", options: ["Die Rechnung, bitte!", "Wo ist die Toilette?", "Guten Appetit!", "Zahlen Sie bar?"], answer: "Die Rechnung, bitte!" },
+            { type: "translate", prompt: "Translate this sentence", wordBank: ["Ich", "möchte", "zahlen", "bitte", "Rechnung", "ein"], answer: "Ich möchte zahlen", hint: "I would like to pay" },
+            { type: "listen", prompt: "Bestellen Sie bitte.", audio: "bestellen sie bitte", options: ["Please order.", "Please leave.", "Pay now.", "Thank you."], answer: "Please order." },
+            { type: "typeIn", prompt: "Type German for: \"The menu, please\"", answer: ["Die Speisekarte, bitte", "die speisekarte bitte"] },
+            { type: "choice", prompt: "\"Guten Appetit!\" is said…", options: ["before eating", "when leaving", "when paying", "when arriving"], answer: "before eating" },
+            { type: "match", pairs: [["die Rechnung", "the bill"], ["die Speisekarte", "the menu"], ["bestellen", "to order"], ["zahlen", "to pay"]] }
+          ]
+        }
+      ]
+    },
+    {
+      id: "de-u3",
+      title: "Travel",
+      color: "#ce82ff",
+      description: "Get around German-speaking countries",
+      lessons: [
+        {
+          id: "de-u3-l1",
+          title: "Directions",
+          exercises: [
+            { type: "select", prompt: "Which means \"left\"?", options: ["links", "rechts", "geradeaus", "hier"], answer: "links" },
+            { type: "translate", prompt: "Translate this sentence", wordBank: ["Wo", "ist", "der", "Bahnhof", "links", "die"], answer: "Wo ist der Bahnhof", hint: "Where is the train station?" },
+            { type: "choice", prompt: "\"geradeaus\" means…", options: ["straight ahead", "around the corner", "left", "nearby"], answer: "straight ahead" },
+            { type: "typeIn", prompt: "Type German for: \"Where is the hotel?\"", answer: ["Wo ist das Hotel", "wo ist das hotel", "Wo ist das Hotel?"] },
+            { type: "match", pairs: [["links", "left"], ["rechts", "right"], ["geradeaus", "straight ahead"], ["der Bahnhof", "train station"]] }
+          ]
+        },
+        {
+          id: "de-u3-l2",
+          title: "Transport",
+          exercises: [
+            { type: "choice", prompt: "What is \"die U-Bahn\"?", options: ["subway", "bus", "tram", "taxi"], answer: "subway" },
+            { type: "listen", prompt: "Der Zug fährt um acht Uhr.", audio: "der zug faehrt um acht uhr", options: ["The train leaves at eight.", "The bus is late.", "The plane flies at night.", "The car is fast."], answer: "The train leaves at eight." },
+            { type: "translate", prompt: "Translate this sentence", wordBank: ["Ich", "fahre", "mit", "dem", "Bus", "Zug", "die"], answer: "Ich fahre mit dem Bus", hint: "I travel by bus" },
+            { type: "typeIn", prompt: "Type German for: \"One ticket to Berlin, please\"", answer: ["Eine Fahrkarte nach Berlin, bitte", "eine fahrkarte nach berlin bitte", "Ein Ticket nach Berlin, bitte"] },
+            { type: "match", pairs: [["der Zug", "the train"], ["der Bus", "the bus"], ["das Flugzeug", "the plane"], ["das Taxi", "the taxi"]] }
+          ]
+        }
+      ]
+    },
+    {
+      id: "de-u4",
+      title: "Daily Life",
+      color: "#ffc800",
+      description: "Time, family, and routines",
+      lessons: [
+        {
+          id: "de-u4-l1",
+          title: "Days & Time",
+          exercises: [
+            { type: "select", prompt: "Which means \"Monday\"?", options: ["Montag", "Dienstag", "Sonntag", "Mittwoch"], answer: "Montag" },
+            { type: "choice", prompt: "\"gestern\" means…", options: ["yesterday", "tomorrow", "today", "tonight"], answer: "yesterday" },
+            { type: "translate", prompt: "Translate this sentence", wordBank: ["Wie", "spät", "ist", "Uhr", "heute", "Morgen"], answer: "Wie spät ist es", hint: "What time is it?" },
+            { type: "typeIn", prompt: "Type German for: \"Today is Sunday\"", answer: ["Heute ist Sonntag", "heute ist sonntag"] },
+            { type: "match", pairs: [["Montag", "Monday"], ["Dienstag", "Tuesday"], ["Mittwoch", "Wednesday"], ["Sonntag", "Sunday"]] }
+          ]
+        },
+        {
+          id: "de-u4-l2",
+          title: "Family",
+          exercises: [
+            { type: "choice", prompt: "\"die Schwester\" is…", options: ["the sister", "the brother", "the cousin", "the aunt"], answer: "the sister" },
+            { type: "listen", prompt: "Meine Mutter kocht.", audio: "meine mutter kocht", options: ["My mother cooks.", "My father reads.", "My sister sings.", "My brother plays."], answer: "My mother cooks." },
+            { type: "translate", prompt: "Translate this sentence", wordBank: ["Mein", "Vater", "liest", "die", "Mutter", "kocht"], answer: "Mein Vater liest", hint: "My father reads" },
+            { type: "typeIn", prompt: "Type German for: \"I have two brothers\"", answer: ["Ich habe zwei Brüder", "ich habe zwei brueder", "Ich habe zwei Bruder"] },
+            { type: "match", pairs: [["der Vater", "the father"], ["die Mutter", "the mother"], ["der Bruder", "the brother"], ["die Schwester", "the sister"]] }
+          ]
+        },
+        {
+          id: "de-u4-l3",
+          title: "Routine Verbs",
+          exercises: [
+            { type: "choice", prompt: "What does \"aufstehen\" mean?", options: ["to get up", "to go to bed", "to shower", "to eat breakfast"], answer: "to get up" },
+            { type: "fillBlank", prompt: "Ich ___ um sieben Uhr auf. (aufstehen)", options: ["stehe", "stehst", "steht", "stehen"], answer: "stehe" },
+            { type: "translate", prompt: "Translate this sentence", wordBank: ["Ich", "gehe", "zur", "Arbeit", "schlafen", "nach"], answer: "Ich gehe zur Arbeit", hint: "I go to work" },
+            { type: "typeIn", prompt: "Type German for: \"I read a book\"", answer: ["Ich lese ein Buch", "ich lese ein buch"] },
+            { type: "match", pairs: [["arbeiten", "to work"], ["lesen", "to read"], ["schlafen", "to sleep"], ["spielen", "to play"]] }
+          ]
+        }
+      ]
+    }
+  ]
+};
+
+const ENGLISH_COURSE = {
+  id: "en",
+  name: "English",
+  flag: "🇬🇧",
+  fromLang: "de",
+  units: [
+    {
+      id: "en-u1",
+      title: "Grundlagen 1",
+      color: "#58cc02",
+      description: "Begrüßungen und \"to be\"",
+      lessons: [
+        {
+          id: "en-u1-l1",
+          title: "Greetings",
+          exercises: [
+            { type: "select", prompt: "Welches bedeutet „Hallo“?", options: ["Hello", "Goodbye", "Please", "Sorry"], answer: "Hello" },
+            { type: "choice", prompt: "„Good night“ heißt…", options: ["Gute Nacht", "Schönen Tag", "Hallo", "Auf Wiedersehen"], answer: "Gute Nacht" },
+            { type: "translate", prompt: "Übersetze diesen Satz", wordBank: ["Good", "morning", "night", "Hello", "wie"], answer: "Good morning", hint: "Guten Morgen" },
+            { type: "listen", prompt: "Thank you very much!", audio: "thank you very much", options: ["Vielen Dank!", "Guten Tag!", "Kein Problem!", "Bis bald!"], answer: "Vielen Dank!" },
+            { type: "typeIn", prompt: "Schreibe auf Englisch: „Auf Wiedersehen“", answer: ["Goodbye", "good bye", "goodbye"] },
+            { type: "match", pairs: [["Hello", "Hallo"], ["Thank you", "Danke"], ["Please", "Bitte"], ["Sorry", "Entschuldigung"]] }
+          ]
+        },
+        {
+          id: "en-u1-l2",
+          title: "People",
+          exercises: [
+            { type: "select", prompt: "Welches bedeutet „der Mann“?", options: ["the man", "the woman", "the child", "the dog"], answer: "the man" },
+            { type: "choice", prompt: "„the sister“ ist…", options: ["die Schwester", "der Bruder", "die Mutter", "die Tante"], answer: "die Schwester" },
+            { type: "translate", prompt: "Übersetze diesen Satz", wordBank: ["I", "am", "a", "student", "is", "the"], answer: "I am a student", hint: "Ich bin ein Schüler" },
+            { type: "typeIn", prompt: "Schreibe auf Englisch: „Sie ist meine Freundin“", answer: ["She is my friend", "she is my friend", "She's my friend"] },
+            { type: "match", pairs: [["the father", "der Vater"], ["the mother", "die Mutter"], ["the brother", "der Bruder"], ["the family", "die Familie"]] }
+          ]
+        },
+        {
+          id: "en-u1-l3",
+          title: "To Be",
+          exercises: [
+            { type: "choice", prompt: "Complete: \"I ___ happy.\"", options: ["am", "is", "are", "be"], answer: "am" },
+            { type: "choice", prompt: "Complete: \"They ___ students.\"", options: ["are", "is", "am", "be"], answer: "are" },
+            { type: "translate", prompt: "Übersetze diesen Satz", wordBank: ["He", "is", "my", "brother", "are", "am"], answer: "He is my brother", hint: "Er ist mein Bruder" },
+            { type: "typeIn", prompt: "Schreibe auf Englisch: „Wir sind hier“", answer: ["We are here", "we're here", "wir are here"] },
+            { type: "fillBlank", prompt: "She ___ a doctor.", options: ["is", "are", "am", "be"], answer: "is" },
+            { type: "match", pairs: [["I am", "ich bin"], ["you are", "du bist"], ["he is", "er ist"], ["we are", "wir sind"]] }
+          ]
+        }
+      ]
+    },
+    {
+      id: "en-u2",
+      title: "Essen & Trinken",
+      color: "#1cb0f6",
+      description: "Bestellen wie ein Muttersprachler",
+      lessons: [
+        {
+          id: "en-u2-l1",
+          title: "Drinks",
+          exercises: [
+            { type: "select", prompt: "Welches bedeutet „das Wasser“?", options: ["the water", "the wine", "the beer", "the milk"], answer: "the water" },
+            { type: "listen", prompt: "I drink coffee.", audio: "i drink coffee", options: ["Ich trinke Kaffee.", "Ich esse Brot.", "Ich trinke Tee.", "Ich will Bier."], answer: "Ich trinke Kaffee." },
+            { type: "translate", prompt: "Übersetze diesen Satz", wordBank: ["I", "would", "like", "a", "tea", "want", "the"], answer: "I would like a tea", hint: "Ich möchte einen Tee" },
+            { type: "typeIn", prompt: "Schreibe auf Englisch: „Ich trinke gern Saft“", answer: ["I like to drink juice", "I drink juice gladly", "I enjoy drinking juice", "i like to drink juice"] },
+            { type: "match", pairs: [["the coffee", "der Kaffee"], ["the tea", "der Tee"], ["the juice", "der Saft"], ["the milk", "die Milch"]] }
+          ]
+        },
+        {
+          id: "en-u2-l2",
+          title: "Eating",
+          exercises: [
+            { type: "choice", prompt: "„the bread“ ist…", options: ["das Brot", "die Butter", "der Käse", "der Kuchen"], answer: "das Brot" },
+            { type: "translate", prompt: "Übersetze diesen Satz", wordBank: ["The", "apple", "is", "red", "eat", "an"], answer: "The apple is red", hint: "Der Apfel ist rot" },
+            { type: "choice", prompt: "Welches Verb bedeutet „essen“?", options: ["to eat", "to drink", "to read", "to drive"], answer: "to eat" },
+            { type: "typeIn", prompt: "Schreibe auf Englisch: „Ich esse einen Apfel“", answer: ["I eat an apple", "I'm eating an apple", "i eat an apple"] },
+            { type: "fillBlank", prompt: "He ___ breakfast every day. (eat)", options: ["eats", "eat", "eating", "eated"], answer: "eats" },
+            { type: "match", pairs: [["to eat", "essen"], ["to drink", "trinken"], ["the cheese", "der Käse"], ["the cake", "der Kuchen"]] }
+          ]
+        },
+        {
+          id: "en-u2-l3",
+          title: "Im Restaurant",
+          exercises: [
+            { type: "choice", prompt: "Wie bittet man um die Rechnung?", options: ["The bill, please!", "Where is the toilet?", "Enjoy your meal!", "Do you pay cash?"], answer: "The bill, please!" },
+            { type: "translate", prompt: "Übersetze diesen Satz", wordBank: ["I", "would", "like", "to", "pay", "the", "order"], answer: "I would like to pay", hint: "Ich möchte bezahlen" },
+            { type: "listen", prompt: "Can I have the menu, please?", audio: "can i have the menu please", options: ["Darf ich die Speisekarte haben?", "Können wir bestellen?", "Wo ist das Restaurant?", "Die Rechnung, bitte."], answer: "Darf ich die Speisekarte haben?" },
+            { type: "typeIn", prompt: "Schreibe auf Englisch: „Guten Appetit!“", answer: ["Enjoy your meal", "enjoy your meal", "Bon appétit"] },
+            { type: "match", pairs: [["the bill", "die Rechnung"], ["the menu", "die Speisekarte"], ["to order", "bestellen"], ["to pay", "bezahlen"]] }
+          ]
+        }
+      ]
+    },
+    {
+      id: "en-u3",
+      title: "Reisen",
+      color: "#ce82ff",
+      description: "Unterwegs in englischsprachigen Ländern",
+      lessons: [
+        {
+          id: "en-u3-l1",
+          title: "Directions",
+          exercises: [
+            { type: "select", prompt: "Welches bedeutet „links“?", options: ["left", "right", "straight", "here"], answer: "left" },
+            { type: "translate", prompt: "Übersetze diesen Satz", wordBank: ["Where", "is", "the", "station", "left", "the"], answer: "Where is the station", hint: "Wo ist der Bahnhof?" },
+            { type: "choice", prompt: "„straight ahead“ heißt…", options: ["geradeaus", "um die Ecke", "links", "in der Nähe"], answer: "geradeaus" },
+            { type: "typeIn", prompt: "Schreibe auf Englisch: „Wo ist das Hotel?“", answer: ["Where is the hotel", "where is the hotel?", "Where's the hotel"] },
+            { type: "match", pairs: [["left", "links"], ["right", "rechts"], ["straight ahead", "geradeaus"], ["the train station", "der Bahnhof"]] }
+          ]
+        },
+        {
+          id: "en-u3-l2",
+          title: "Transport",
+          exercises: [
+            { type: "choice", prompt: "Was ist „the subway“?", options: ["die U-Bahn", "der Bus", "die Straßenbahn", "das Taxi"], answer: "die U-Bahn" },
+            { type: "listen", prompt: "The train leaves at eight.", audio: "the train leaves at eight", options: ["Der Zug fährt um acht.", "Der Bus ist spät.", "Das Flugzeug fliegt nachts.", "Das Auto ist schnell."], answer: "Der Zug fährt um acht." },
+            { type: "translate", prompt: "Übersetze diesen Satz", wordBank: ["I", "go", "by", "bus", "train", "with", "the"], answer: "I go by bus", hint: "Ich fahre mit dem Bus" },
+            { type: "typeIn", prompt: "Schreibe auf Englisch: „Ein Ticket nach London, bitte“", answer: ["One ticket to London, please", "a ticket to london please", "one ticket to london please"] },
+            { type: "match", pairs: [["the train", "der Zug"], ["the bus", "der Bus"], ["the plane", "das Flugzeug"], ["the taxi", "das Taxi"]] }
+          ]
+        }
+      ]
+    },
+    {
+      id: "en-u4",
+      title: "Alltag",
+      color: "#ffc800",
+      description: "Zeit, Familie und Routinen",
+      lessons: [
+        {
+          id: "en-u4-l1",
+          title: "Tage & Zeit",
+          exercises: [
+            { type: "select", prompt: "Welches bedeutet „Montag“?", options: ["Monday", "Tuesday", "Sunday", "Wednesday"], answer: "Monday" },
+            { type: "choice", prompt: "„yesterday“ heißt…", options: ["gestern", "morgen", "heute", "heute Nacht"], answer: "gestern" },
+            { type: "translate", prompt: "Übersetze diesen Satz", wordBank: ["What", "time", "is", "it", "today", "clock"], answer: "What time is it", hint: "Wie spät ist es?" },
+            { type: "typeIn", prompt: "Schreibe auf Englisch: „Heute ist Sonntag“", answer: ["Today is Sunday", "it is sunday today", "today is sunday"] },
+            { type: "match", pairs: [["Monday", "Montag"], ["Tuesday", "Dienstag"], ["Wednesday", "Mittwoch"], ["Sunday", "Sonntag"]] }
+          ]
+        },
+        {
+          id: "en-u4-l2",
+          title: "Familie",
+          exercises: [
+            { type: "choice", prompt: "„the brother“ ist…", options: ["der Bruder", "die Schwester", "der Vater", "der Cousin"], answer: "der Bruder" },
+            { type: "listen", prompt: "My father reads.", audio: "my father reads", options: ["Mein Vater liest.", "Meine Mutter kocht.", "Mein Bruder spielt.", "Meine Schwester singt."], answer: "Mein Vater liest." },
+            { type: "translate", prompt: "Übersetze diesen Satz", wordBank: ["I", "have", "two", "sisters", "has", "a"], answer: "I have two sisters", hint: "Ich habe zwei Schwestern" },
+            { type: "typeIn", prompt: "Schreibe auf Englisch: „Meine Mutter kocht“", answer: ["My mother cooks", "my mom cooks", "my mother cooks"] },
+            { type: "match", pairs: [["the father", "der Vater"], ["the mother", "die Mutter"], ["the sister", "die Schwester"], ["the child", "das Kind"]] }
+          ]
+        },
+        {
+          id: "en-u4-l3",
+          title: "Routine Verben",
+          exercises: [
+            { type: "choice", prompt: "Was bedeutet „to get up“?", options: ["aufstehen", "ins Bett gehen", "duschen", "frühstücken"], answer: "aufstehen" },
+            { type: "fillBlank", prompt: "I ___ up at seven o'clock.", options: ["get", "gets", "getting", "got"], answer: "get" },
+            { type: "translate", prompt: "Übersetze diesen Satz", wordBank: ["I", "go", "to", "work", "sleep", "home"], answer: "I go to work", hint: "Ich gehe zur Arbeit" },
+            { type: "typeIn", prompt: "Schreibe auf Englisch: „Ich lese ein Buch“", answer: ["I read a book", "i read a book", "I'm reading a book"] },
+            { type: "match", pairs: [["to work", "arbeiten"], ["to read", "lesen"], ["to sleep", "schlafen"], ["to play", "spielen"]] }
+          ]
+        }
+      ]
+    }
+  ]
+};
+
+module.exports = { GERMAN_COURSE, ENGLISH_COURSE };

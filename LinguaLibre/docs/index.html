@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LinguaLibre — Free Open-Source Language Learning</title>
+  <link rel="stylesheet" href="./css/style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦉</text></svg>" />
+</head>
+<body>
+  <!-- ===== Top bar ===== -->
+  <header class="topbar">
+    <div class="logo" onclick="App.showHome()">🦉 <span>Lingua<b>Libre</b></span></div>
+    <nav class="topnav">
+      <button class="navbtn active" data-view="learn" onclick="App.switchTab('learn')">🌿 Learn</button>
+      <button class="navbtn" data-view="practice" onclick="App.switchTab('practice')">🏹 Practice</button>
+      <button class="navbtn" data-view="tutor" onclick="App.switchTab('tutor')">🤖 AI Tutor</button>
+      <button class="navbtn" data-view="profile" onclick="App.switchTab('profile')">🙂 Profile</button>
+    </nav>
+    <div class="unlimited-badge" title="No energy. No limits. Ever.">∞ UNLIMITED · FREE</div>
+  </header>
+
+  <!-- ===== Course select / home ===== -->
+  <main id="view-home" class="view">
+    <div class="hero">
+      <h1>Learn languages for free.<br/><span class="green">Forever unlimited.</span></h1>
+      <p class="sub">Open-source Duolingo-style learning. No points, no hearts, no battery, no ads — every lesson, every exercise, all the time.</p>
+      <div id="courseCards" class="course-cards"></div>
+      <p class="footnote">Powered by an optional <b>Grok (xAI)</b> API key you bring yourself — see <code>.env</code>. The app works fully offline without it.</p>
+    </div>
+  </main>
+
+  <!-- ===== Learning path ===== -->
+  <main id="view-learn" class="view hidden">
+    <div class="path-header">
+      <button class="back-btn" onclick="App.showHome()">← Courses</button>
+      <h2 id="courseTitle"></h2>
+      <div class="progress-pill" id="overallProgress"></div>
+    </div>
+    <div id="skillTree" class="skill-tree"></div>
+  </main>
+
+  <!-- ===== Lesson player ===== -->
+  <div id="lessonOverlay" class="overlay hidden">
+    <div class="lesson-top">
+      <button class="close-x" onclick="App.quitLesson()">✕</button>
+      <div class="hearts-free">∞</div>
+      <div class="progress-track"><div id="lessonBar" class="progress-fill"></div></div>
+      <div id="exCount" class="ex-count"></div>
+    </div>
+    <div id="exerciseArea" class="exercise-area"></div>
+    <div id="feedbackBar" class="feedback-bar hidden">
+      <div class="fb-left">
+        <div id="fbIcon" class="fb-icon"></div>
+        <div><div id="fbTitle" class="fb-title"></div><div id="fbDetail" class="fb-detail"></div></div>
+      </div>
+      <button id="fbContinue" class="btn btn-green" onclick="App.nextExercise()">CONTINUE</button>
+    </div>
+    <div id="checkWrap" class="check-wrap">
+      <button class="btn btn-gray" id="skipBtn" onclick="App.skipExercise()">SKIP</button>
+      <button class="btn btn-green big" id="checkBtn" onclick="App.checkAnswer()">CHECK</button>
+    </div>
+  </div>
+
+  <!-- ===== Lesson complete ===== -->
+  <div id="completeOverlay" class="overlay center hidden">
+    <div class="complete-card">
+      <div class="big-emoji">🎉</div>
+      <h2>Lesson complete!</h2>
+      <p id="completeStats"></p>
+      <p class="no-limit-note">You can replay any lesson as often as you like — there is no energy system here. 💚</p>
+      <button class="btn btn-green big" onclick="App.closeComplete()">CONTINUE LEARNING</button>
+    </div>
+  </div>
+
+  <!-- ===== AI practice ===== -->
+  <main id="view-practice" class="view hidden">
+    <div class="panel">
+      <h2>🏹 Unlimited AI Practice</h2>
+      <p>Generate fresh translate exercises with Grok — as many as you want, no limits.</p>
+      <div class="row">
+        <input id="practiceTopic" placeholder="topic (e.g. ordering food, hobbies, airport…)" />
+        <button class="btn btn-green" onclick="App.generatePractice()">GENERATE</button>
+      </div>
+      <div id="practiceArea"></div>
+    </div>
+  </main>
+
+  <!-- ===== AI tutor ===== -->
+  <main id="view-tutor" class="view hidden">
+    <div class="panel">
+      <h2>🤖 Ask Lingo — your AI tutor</h2>
+      <p>Grammar questions, word meanings, usage — powered by Grok. Unlimited messages.</p>
+      <div id="chatLog" class="chat-log"></div>
+      <div class="row">
+        <input id="chatInput" placeholder="Why is it der, die or das?" onkeydown="if(event.key==='Enter')App.sendChat()" />
+        <button class="btn btn-green" onclick="App.sendChat()">SEND</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- ===== Profile ===== -->
+  <main id="view-profile" class="view hidden">
+    <div class="panel">
+      <h2>🙂 Your progress (stored locally only)</h2>
+      <div id="profileStats" class="stats-grid"></div>
+      <p class="muted">We track lessons completed & streak for fun — but nothing is gated. Everything stays unlocked forever.</p>
+      <button class="btn btn-red-outline" onclick="App.resetProgress()">Reset progress</button>
+    </div>
+    <div class="panel">
+      <h2>🤖 Grok AI settings</h2>
+      <p class="muted">When hosted statically (GitHub Pages / surge), paste your xAI API key here. It is stored <b>only in your browser's localStorage</b> and sent directly to api.x.ai — never to any third-party server. When running the Node server, put the key in <code>.env</code> instead.</p>
+      <div class="row">
+        <input id="xaiKeyInput" type="password" placeholder="XAI_API_KEY (xai-…)" />
+        <button class="btn btn-green" onclick="App.saveKey()">SAVE</button>
+      </div>
+      <p id="keyStatus" class="muted"></p>
+    </div>
+  </main>
+
+  <script src="./js/audio.js"></script>
+  <script src="./js/app.js"></script>
+</body>
+</html>
